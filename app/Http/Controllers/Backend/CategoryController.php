@@ -65,7 +65,35 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $category = Category::find($id);
+        if(!$category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found'
+            ]);
+        }
+
+        $rules = [
+            'name' => ['required', 'unique:categories,name,' . $id],
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        $error = $validator->errors()->first();
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $error
+            ]);
+        }
+
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name); 
+        $category->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category updated successfully'
+        ]);
     }
 
     /**

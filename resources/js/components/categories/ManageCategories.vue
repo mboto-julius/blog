@@ -30,14 +30,14 @@
                             <th>{{ index + 1 }}</th>
                             <td>{{ category.name }}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm mx-2">
-                                    Edit
-                                </button>
                                 <button
-                                    class="btn btn-danger btn-sm"
-                                    @click="deleteCategory(category.id)"
+                                    class="btn btn-primary btn-md mx-2"
+                                    @click="editCategory(category)"
                                 >
-                                    Delete
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger btn-md">
+                                    <i class="bi bi-trash"></i>
                                 </button>
                             </td>
                         </tr>
@@ -48,7 +48,10 @@
 
             <!-- Modal -->
             <medium-modal v-if="modal" @close="closeModal">
-                <template #header>Add Category</template>
+                <template #header>
+                    <span v-if="add">Add Category</span>
+                    <span v-if="edit">Edit Category</span>
+                </template>
                 <template #body>
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -62,7 +65,20 @@
                     </div>
                 </template>
                 <template #footer>
-                    <button class="btn btn-primary" @click="store">Save</button>
+                    <button
+                        v-if="add"
+                        class="btn btn-primary"
+                        @click.prevent="store"
+                    >
+                        Save
+                    </button>
+                    <button
+                        v-if="edit"
+                        class="btn btn-primary"
+                        @click.prevent="update"
+                    >
+                        Save
+                    </button>
                 </template>
             </medium-modal>
             <!-- /Modal -->
@@ -77,6 +93,8 @@ export default {
     data() {
         return {
             modal: false,
+            add: true,
+            edit: false,
             category: {
                 id: "",
                 name: "",
@@ -97,7 +115,16 @@ export default {
 
         closeModal() {
             this.modal = false;
+            this.add = true;
+            this.edit = false;
             this.category = {};
+        },
+
+        editCategory(s) {
+            this.category = s;
+            this.add = false;
+            this.edit = true;
+            this.modal = true;
         },
 
         store() {
@@ -117,6 +144,26 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
+                });
+        },
+
+        update() {
+            let data = {
+                name: this.category.name,
+            };
+            axios
+                .put(`/categories/${this.category.id}`, data)
+                .then((response) => {
+                    if (response.data.success) {
+                        this.closeModal();
+                        this.$toast.success(response.data.message);
+                        this.getCategories();
+                    } else {
+                        this.$toast.error(response.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
                 });
         },
     },
