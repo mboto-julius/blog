@@ -3,7 +3,7 @@
         <div class="modal-overlay" @click="$emit('close')"></div>
         <div
             class="modal"
-            id="medium-modal"
+            id="confirm-dialog"
             style="display: block"
             aria-hidden="true"
             tabindex="-1"
@@ -35,7 +35,7 @@
                         <button
                             type="button"
                             @click="$emit('close')"
-                            class="btn btn-danger"
+                            class="btn btn-primary"
                             data-dismiss="modal"
                         >
                             Close

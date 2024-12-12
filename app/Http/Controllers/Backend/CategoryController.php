@@ -99,8 +99,26 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found'
+            ]);
+        }
+        try {
+            $category->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Category deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Deletion unsuccessful due to data dependency"
+            ]);
+        }
     }
 }

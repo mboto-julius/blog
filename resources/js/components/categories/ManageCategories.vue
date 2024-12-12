@@ -36,7 +36,10 @@
                                 >
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                <button class="btn btn-danger btn-md">
+                                <button
+                                    class="btn btn-danger btn-md"
+                                    @click="deleteCategory(category)"
+                                >
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -82,6 +85,30 @@
                 </template>
             </medium-modal>
             <!-- /Modal -->
+
+            <!-- Confirmation dialog -->
+            <confirm-dialog v-if="deleteModal" @close="closeDeleteModal">
+                <template v-slot:header>
+                    <span class="text-danger fw-bold"
+                        >Delete Confirmation!</span
+                    >
+                </template>
+
+                <template v-slot:body>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Are you sure you want to delete this data?</p>
+                        </div>
+                    </div>
+                </template>
+
+                <template v-slot:footer>
+                    <button @click.prevent="destroy" class="btn btn-danger">
+                        Delete
+                    </button>
+                </template>
+            </confirm-dialog>
+            <!-- Confirmation dialog -->
         </div>
     </div>
 </template>
@@ -93,6 +120,7 @@ export default {
     data() {
         return {
             modal: false,
+            deleteModal: false,
             add: true,
             edit: false,
             category: {
@@ -120,11 +148,20 @@ export default {
             this.category = {};
         },
 
+        closeDeleteModal() {
+            this.deleteModal = false;
+        },
+
         editCategory(s) {
             this.category = s;
             this.add = false;
             this.edit = true;
             this.modal = true;
+        },
+
+        deleteCategory(s) {
+            this.category.id = s.id;
+            this.deleteModal = true;
         },
 
         store() {
@@ -156,6 +193,23 @@ export default {
                 .then((response) => {
                     if (response.data.success) {
                         this.closeModal();
+                        this.$toast.success(response.data.message);
+                        this.getCategories();
+                    } else {
+                        this.$toast.error(response.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+
+        destroy() {
+            axios
+                .delete("/categories/" + this.category.id)
+                .then((response) => {
+                    if (response.data.success) {
+                        this.closeDeleteModal();
                         this.$toast.success(response.data.message);
                         this.getCategories();
                     } else {
