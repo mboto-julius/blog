@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('login', 'auths.login')->name('login');
+Route::view('login', 'auth.login')->name('login');
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('authenticate', 'login')->name('authenticate');

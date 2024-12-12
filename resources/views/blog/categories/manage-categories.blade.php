@@ -2,6 +2,6 @@
 
 @section('content')
 
-<dashboard />
+<manage-categories />
 
 @endsection
