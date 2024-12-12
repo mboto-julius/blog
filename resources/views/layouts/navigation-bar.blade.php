@@ -23,7 +23,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{{ route('manage.categories') }}">Categories</a></li>
-                        <li><a class="dropdown-item" href="#">Tags</a></li>
+                        <li><a class="dropdown-item" href="{{ route('manage.tags') }}">Tags</a></li>
                         <li><a class="dropdown-item" href="#">Posts</a></li>
                     </ul>
                 </li>
