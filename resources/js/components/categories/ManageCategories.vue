@@ -47,7 +47,7 @@
             <!-- /Table -->
 
             <!-- Modal -->
-            <medium-modal v-if="addModal" @close="closeModal">
+            <medium-modal v-if="modal" @close="closeModal">
                 <template #header>Add Category</template>
                 <template #body>
                     <div class="form-group">
@@ -76,7 +76,7 @@ import { mapActions, mapGetters } from "vuex";
 export default {
     data() {
         return {
-            addModal: false,
+            modal: false,
             category: {
                 id: "",
                 name: "",
@@ -92,11 +92,11 @@ export default {
         ...mapActions(["getCategories"]),
 
         openModal() {
-            this.addModal = true;
+            this.modal = true;
         },
 
         closeModal() {
-            this.addModal = false;
+            this.modal = false;
             this.category = {};
         },
 
