@@ -2,6 +2,7 @@ import "./bootstrap";
 import { createApp } from "vue";
 import store from "./store";
 import Toaster from "@meforma/vue-toaster";
+import { Bootstrap5Pagination } from "laravel-vue-pagination";
 
 import Dashboard from "./components/Dashboard.vue";
 import ManageCategories from "./components/categories/ManageCategories.vue";
@@ -17,6 +18,7 @@ app.component("manage-tags", ManageTags);
 
 app.component("medium-modal", MediumModal);
 app.component("confirm-dialog", ConfirmDialog);
+app.component("pagination", Bootstrap5Pagination);
 
 app.use(store);
 app.use(Toaster, {

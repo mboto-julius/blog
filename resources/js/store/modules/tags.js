@@ -18,9 +18,9 @@ export default {
     },
 
     actions: {
-        async getTags({ commit }) {
+        async getTags({ commit }, page = 1) {
             try {
-                const response = await axios.get("/tags");
+                const response = await axios.get(`/tags?page=${page}`);
                 if (response.data.success) {
                     commit("SET_TAGS", response.data.tags);
                 }

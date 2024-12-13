@@ -23,8 +23,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(tag, index) in tags" :key="tag.id">
-                            <th>{{ index + 1 }}</th>
+                        <tr v-for="(tag, index) in tagList" :key="tag.id">
+                            <td>{{ index + 1 }}</td>
                             <td>{{ tag.name }}</td>
                             <td>
                                 <button class="btn btn-primary btn-md mx-2">
@@ -39,6 +39,16 @@
                 </table>
             </div>
             <!-- /Table -->
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                <pagination
+                    :data="tags"
+                    :limit="limit"
+                    @pagination-change-page="fetchTags"
+                />
+            </div>
+            <!-- /Pagination -->
         </div>
     </div>
 </template>
@@ -49,23 +59,25 @@ import { mapActions, mapGetters } from "vuex";
 export default {
     data() {
         return {
-            tag: {
-                id: "",
-                name: "",
-            },
+            limit: 2,
         };
     },
-
     computed: {
         ...mapGetters(["tags"]),
-    },
 
+        tagList() {
+            return this.tags.data;
+        },
+    },
     methods: {
         ...mapActions(["getTags"]),
-    },
 
+        fetchTags(page = 1) {
+            this.getTags(page);
+        },
+    },
     created() {
-        this.getTags();
+        this.fetchTags();
     },
 };
 </script>
