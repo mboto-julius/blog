@@ -108,7 +108,7 @@
                     </button>
                 </template>
             </confirm-dialog>
-            <!-- Confirmation dialog -->
+            <!-- /Confirmation dialog -->
         </div>
     </div>
 </template>

@@ -33,7 +33,10 @@
                                 >
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                <button class="btn btn-danger btn-md">
+                                <button
+                                    class="btn btn-danger btn-md"
+                                    @click="deleteTag(tag)"
+                                >
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -89,6 +92,30 @@
                 />
             </div>
             <!-- /Pagination -->
+
+            <!-- Confirmation dialog -->
+            <confirm-dialog v-if="deleteModal" @close="closeDeleteModal">
+                <template v-slot:header>
+                    <span class="text-danger fw-bold"
+                        >Delete Confirmation!</span
+                    >
+                </template>
+
+                <template v-slot:body>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Are you sure you want to delete this data?</p>
+                        </div>
+                    </div>
+                </template>
+
+                <template v-slot:footer>
+                    <button @click.prevent="destroy" class="btn btn-danger">
+                        Delete
+                    </button>
+                </template>
+            </confirm-dialog>
+            <!-- /Confirmation dialog -->
         </div>
     </div>
 </template>
@@ -137,11 +164,20 @@ export default {
             this.tag = {};
         },
 
+        closeDeleteModal() {
+            this.deleteModal = false;
+        },
+
         editTag(s) {
             this.tag = s;
             this.add = false;
             this.edit = true;
             this.modal = true;
+        },
+
+        deleteTag(s) {
+            this.tag.id = s.id;
+            this.deleteModal = true;
         },
 
         store() {
@@ -173,6 +209,23 @@ export default {
                 .then((response) => {
                     if (response.data.success) {
                         this.closeModal();
+                        this.$toast.success(response.data.message);
+                        this.getTags();
+                    } else {
+                        this.$toast.error(response.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+
+        destroy() {
+            axios
+                .delete("/tags/" + this.tag.id)
+                .then((response) => {
+                    if (response.data.success) {
+                        this.closeDeleteModal();
                         this.$toast.success(response.data.message);
                         this.getTags();
                     } else {

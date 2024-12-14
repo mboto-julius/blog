@@ -101,6 +101,24 @@ class TagController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $tag = Tag::find($id);
+        if (!$tag) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tag not found'
+            ]);
+        }
+        try {
+            $tag->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Tag deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Deletion unsuccessful due to data dependency"
+            ]);
+        }
     }
 }
