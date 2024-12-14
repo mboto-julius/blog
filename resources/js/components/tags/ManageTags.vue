@@ -27,7 +27,10 @@
                             <td>{{ index + 1 }}</td>
                             <td>{{ tag.name }}</td>
                             <td>
-                                <button class="btn btn-primary btn-md mx-2">
+                                <button
+                                    class="btn btn-primary btn-md mx-2"
+                                    @click="editTag(tag)"
+                                >
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                                 <button class="btn btn-danger btn-md">
@@ -134,6 +137,13 @@ export default {
             this.tag = {};
         },
 
+        editTag(s) {
+            this.tag = s;
+            this.add = false;
+            this.edit = true;
+            this.modal = true;
+        },
+
         store() {
             let data = {
                 name: this.tag.name,
@@ -151,6 +161,26 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
+                });
+        },
+
+        update() {
+            let data = {
+                name: this.tag.name,
+            };
+            axios
+                .put(`/tags/${this.tag.id}`, data)
+                .then((response) => {
+                    if (response.data.success) {
+                        this.closeModal();
+                        this.$toast.success(response.data.message);
+                        this.getTags();
+                    } else {
+                        this.$toast.error(response.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
                 });
         },
     },

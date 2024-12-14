@@ -65,7 +65,35 @@ class TagController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $tag = Tag::find($id);
+        if(!$tag) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tag not found'
+            ]);
+        }
+
+        $rules = [
+            'name' => ['required', 'unique:tags,name,' . $id],
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        $error = $validator->errors()->first();
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $error
+            ]);
+        }
+
+        $tag->name = $request->name;
+        $tag->slug = Str::slug($request->name); 
+        $tag->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tag updated successfully'
+        ]);
     }
 
     /**
