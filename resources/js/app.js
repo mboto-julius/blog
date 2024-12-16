@@ -9,12 +9,14 @@ import ManageCategories from "./components/categories/ManageCategories.vue";
 import MediumModal from "./components/partials/MediumModal.vue";
 import ConfirmDialog from "./components/partials/ConfirmDialog.vue";
 import ManageTags from "./components/tags/ManageTags.vue";
+import ManagePosts from "./components/posts/ManagePosts.vue";
 
 const app = createApp({});
 
 app.component("dashboard", Dashboard);
 app.component("manage-categories", ManageCategories);
 app.component("manage-tags", ManageTags);
+app.component("manage-posts", ManagePosts);
 
 app.component("medium-modal", MediumModal);
 app.component("confirm-dialog", ConfirmDialog);
