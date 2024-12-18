@@ -29,6 +29,12 @@
                             <td>{{ post.title }}</td>
                             <td>{{ post.category.name }}</td>
                             <td>
+                                <button
+                                    class="btn btn-success btn-md"
+                                    @click.prevent="showPost(post)"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
                                 <button class="btn btn-primary btn-md mx-2">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
@@ -126,6 +132,54 @@
             </large-modal>
             <!-- /Modal -->
 
+            <!-- Show Modal -->
+            <large-modal v-if="showModal" @close="closeModal">
+                <template #header>
+                    {{ post.title }}
+                </template>
+                <template #body>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>Category</th>
+                                        <td>{{ post.category.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tags</th>
+                                        <td>
+                                            <span
+                                                v-for="(
+                                                    tag, index
+                                                ) in post.tags"
+                                                :key="index"
+                                            >
+                                                {{ tag.name
+                                                }}<span
+                                                    v-if="
+                                                        index <
+                                                        post.tags.length - 1
+                                                    "
+                                                    >,
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Content</th>
+                                        <td>
+                                            <div v-html="post.content"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+            </large-modal>
+            <!-- /Show Modal -->
+
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
                 <pagination
@@ -148,6 +202,7 @@ export default {
             limit: 2,
             modal: false,
             deleteModal: false,
+            showModal: false,
             add: true,
             edit: false,
             post: {
@@ -188,6 +243,7 @@ export default {
 
         closeModal() {
             this.modal = false;
+            this.showModal = false;
             this.add = true;
             this.edit = false;
             this.post = {};
@@ -208,6 +264,11 @@ export default {
                 .on("change", function () {
                     self.post.tag_ids = $(this).val();
                 });
+        },
+
+        showPost(post) {
+            this.post = post;
+            this.showModal = true;
         },
 
         store() {
