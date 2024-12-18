@@ -121,4 +121,15 @@ class TagController extends Controller
             ]);
         }
     }
+
+    /**
+     * Get a listing of the resource.
+     */
+    public function getTagList(){
+        $tags = Tag::all();
+        return response()->json([
+            'success' => true,
+            'tags' => $tags
+        ]);
+    }
 }
