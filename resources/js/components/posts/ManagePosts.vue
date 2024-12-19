@@ -35,7 +35,10 @@
                                 >
                                     <i class="bi bi-eye"></i>
                                 </button>
-                                <button class="btn btn-primary btn-md mx-2">
+                                <button
+                                    class="btn btn-primary btn-md mx-2"
+                                    @click.prevent="editPost(post)"
+                                >
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                                 <button
@@ -62,10 +65,10 @@
                         <label for="name">Name</label>
                         <input
                             type="text"
-                            v-model="post.name"
+                            v-model="post.title"
                             class="form-control mt-2"
                             id="name"
-                            placeholder="Enter post name"
+                            placeholder="Enter post title"
                         />
                     </div>
                     <div class="form-group mb-3">
@@ -296,6 +299,13 @@ export default {
             this.showModal = true;
         },
 
+        editPost(s) {
+            this.post = s;
+            this.add = false;
+            this.edit = true;
+            this.modal = true;
+        },
+
         deletePost(post) {
             this.post.id = post.id;
             this.deleteModal = true;
@@ -321,6 +331,30 @@ export default {
                 })
                 .catch((error) => {
                     console.log(error);
+                });
+        },
+
+        update() {
+            const data = {
+                title: this.post.title,
+                category_id: this.post.category_id,
+                content: this.post.content,
+                tag_ids: this.post.tag_ids,
+            };
+
+            axios
+                .put(`/posts/${this.post.id}`, data)
+                .then((response) => {
+                    if (response.data.success) {
+                        this.closeModal();
+                        this.$toast.success(response.data.message);
+                        this.fetchPosts();
+                    } else {
+                        this.$toast.error(response.data.message);
+                    }
+                })
+                .catch((error) => {
+                    this.$toast.error("Failed to update the post.");
                 });
         },
 

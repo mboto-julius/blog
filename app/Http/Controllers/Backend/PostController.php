@@ -73,7 +73,44 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Post not found'
+            ]);
+        }
+
+        $rules = [
+            'title' => ['required', 'string', 'max:255', 'unique:posts,title,'.$id], 
+            'category_id' => ['required', 'exists:categories,id'], 
+            'content' => ['required', 'string'], 
+            'tag_ids' => ['required', 'array', 'min:1', 'exists:tags,id'],
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $error = $validator->errors()->first(); 
+            return response()->json([
+                'success' => false,
+                'message' => $error
+            ]);
+        }
+
+        $post->title = $request->title;
+        $post->category_id = $request->category_id;
+        $post->slug = Str::slug($request->title); 
+        $post->content = $request->content;
+        $post->save();
+
+        $post->tags()->sync($request->tag_ids);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Post updated successfully!',
+            'post' => $post->load('tags'),
+        ]);
     }
 
     /**
