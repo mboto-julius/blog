@@ -292,6 +292,9 @@ export default {
                 .on("change", function () {
                     self.post.tag_ids = $(this).val();
                 });
+            if (this.post.tag_ids) {
+                $("#tags").val(this.post.tag_ids).trigger("change");
+            }
         },
 
         showPost(post) {
@@ -299,11 +302,14 @@ export default {
             this.showModal = true;
         },
 
-        editPost(s) {
-            this.post = s;
+        editPost(post) {
+            this.post = { ...post, tag_ids: post.tags.map((tag) => tag.id) };
             this.add = false;
             this.edit = true;
             this.modal = true;
+            this.$nextTick(() => {
+                this.initializeSelect2();
+            });
         },
 
         deletePost(post) {
