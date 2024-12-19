@@ -38,7 +38,10 @@
                                 <button class="btn btn-primary btn-md mx-2">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
-                                <button class="btn btn-danger btn-md">
+                                <button
+                                    class="btn btn-danger btn-md"
+                                    @click.prevent="deletePost(post)"
+                                >
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -180,6 +183,28 @@
             </large-modal>
             <!-- /Show Modal -->
 
+            <!-- Confirmation dialog -->
+            <confirm-dialog v-if="deleteModal" @close="closeDeleteModal">
+                <template v-slot:header>
+                    <span class="text-danger fw-bold"
+                        >Delete Confirmation!</span
+                    >
+                </template>
+                <template v-slot:body>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Are you sure you want to delete this data?</p>
+                        </div>
+                    </div>
+                </template>
+                <template v-slot:footer>
+                    <button @click.prevent="destroy" class="btn btn-danger">
+                        Delete
+                    </button>
+                </template>
+            </confirm-dialog>
+            <!-- /Confirmation dialog -->
+
             <!-- Pagination -->
             <div class="d-flex justify-content-center mt-4">
                 <pagination
@@ -271,6 +296,11 @@ export default {
             this.showModal = true;
         },
 
+        deletePost(post) {
+            this.post.id = post.id;
+            this.deleteModal = true;
+        },
+
         store() {
             let data = {
                 title: this.post.name,
@@ -283,6 +313,23 @@ export default {
                 .then((response) => {
                     if (response.data.success) {
                         this.closeModal();
+                        this.$toast.success(response.data.message);
+                        this.fetchPosts();
+                    } else {
+                        this.$toast.error(response.data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+
+        destroy() {
+            axios
+                .delete("/posts/" + this.post.id)
+                .then((response) => {
+                    if (response.data.success) {
+                        this.closeDeleteModal();
                         this.$toast.success(response.data.message);
                         this.fetchPosts();
                     } else {
